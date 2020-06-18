@@ -27,6 +27,12 @@ public class PlayerAttack : MonoBehaviour
             {
                 print("충돌오브젝트 : " + hitInfo.collider.name);
 
+                //내총알에 충돌했으니 몬스터 체력을 깎기
+                EnemyFSM enemy = hitInfo.collider.GetComponent<EnemyFSM>();
+                enemy.HitDamage(10);
+                //hitInfo.collider.gameObject.GetComponent<EnemyFSM>().HitDamage(10);
+                //hitInfo.transform.GetComponent<EnemyFSM>().HitDamage(10);
+
                 //충돌지점에 총알이펙트 생성한다
                 //총알파편 이벡트 생선
                 GameObject bulletImpact = Instantiate(bulletImpactFactory);

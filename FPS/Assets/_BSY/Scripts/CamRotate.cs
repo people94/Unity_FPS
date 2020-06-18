@@ -26,6 +26,7 @@ public class CamRotate : MonoBehaviour
     {
         float h = Input.GetAxis("Mouse X");
         float v = Input.GetAxis("Mouse Y");
+        
         //Vector3 dir = new Vector3(h, v, 0); - 잘못된 예
         //회전은 각각의 축을 기반으로 회전이 된다.
         Vector3 dir = new Vector3(-v, h, 0);

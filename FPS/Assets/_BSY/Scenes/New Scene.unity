@@ -154,14 +154,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd22ff687bc8cfe4fad44f924cede16c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
-  maxHP: 10
-  chaseSpeed: 5
-  chaseRange: 15
+  findRange: 15
+  moveRange: 30
   attackRange: 5
-  attackTime: 2
-  returnRange: 30
-  returnSpeed: 10
 --- !u!114 &137130244
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -823,7 +818,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1238871050}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.06, y: 1, z: -0.26}
+  m_LocalPosition: {x: -5.3, y: 1, z: -17.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1876987186}
