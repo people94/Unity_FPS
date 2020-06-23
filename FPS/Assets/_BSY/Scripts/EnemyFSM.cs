@@ -60,8 +60,12 @@ public class EnemyFSM : MonoBehaviour
     public float moveRange = 30f;   //시작지점에서 최대 이동가능한 번위
     public float attackRange = 2f;  //공격 가능 범위
     Vector3 startPoint;             //몬스터 시작위치
+    Quaternion startRotation;       //몬스터 시작회전값
     Transform player;               //플레이어 찾기 위해
     CharacterController cc;         //이동처리를 위한 캐릭터 컨트롤러
+
+    //애니메이션을 제어하기 위한 애니메이터 컴포넌트
+    Animator anim;
 
     //몬스터 일반변수
     int hp = 100;                   //체력
@@ -92,12 +96,15 @@ public class EnemyFSM : MonoBehaviour
 
         //시작지점 저장
         startPoint = transform.position;
-
+        startRotation = transform.rotation;
         //플레이어 위치 찾기
         player = GameObject.Find("Player").transform;
 
         //캐릭터 컨트롤러 찾기
         cc = GetComponent<CharacterController>();
+
+        //애니메이터 컴포넌트 찾기
+        anim = GetComponentInChildren<Animator>();
     }
 
     // Update is called once per frame
@@ -132,10 +139,10 @@ public class EnemyFSM : MonoBehaviour
                 Return();
                 break;
             case EnemyState.Damaged:
-                Damaged();
+                //Damaged();
                 break;
             case EnemyState.Die:
-                Die();
+                //Die();
                 break;
             default:
                 break;
@@ -168,6 +175,9 @@ public class EnemyFSM : MonoBehaviour
         {
             state = EnemyState.Move;
             print("상태전환 : Idle -> Move");
+
+            //애니메이션 상태 변환하기
+            anim.SetTrigger("Move");
         }
     }
 
@@ -200,6 +210,9 @@ public class EnemyFSM : MonoBehaviour
         {
             state = EnemyState.Return;
             print("상태전환 : Move -> Return");
+
+            //애니메이션
+            anim.SetTrigger("Return");
         }
         //리턴상태가 아니면 플레이어를 추격해야 한다
         else if(Vector3.Distance(transform.position, player.position) > attackRange)
@@ -236,6 +249,9 @@ public class EnemyFSM : MonoBehaviour
         {
             state = EnemyState.Attack;
             print("상태전환 : Move -> Attack");
+
+            //애니메이션
+            anim.SetTrigger("Attack");
         }
     }
 
@@ -273,6 +289,9 @@ public class EnemyFSM : MonoBehaviour
 
                 //타이머 초기화
                 timer = 0.0f;
+
+                //애니메이션
+                anim.SetTrigger("Attack");
             }
         }
         else//현재 상태를 무브로 전환하기 (재추격)
@@ -280,6 +299,9 @@ public class EnemyFSM : MonoBehaviour
             state = EnemyState.Move;
             print("상태전환 : Attack -> Move");
             timer = 0.0f;
+
+            //애니메이션
+            anim.SetTrigger("Move");
         }
     }
 
@@ -307,14 +329,20 @@ public class EnemyFSM : MonoBehaviour
         if(Vector3.Distance(transform.position, startPoint) > 0.1f)
         {
             Vector3 dir = (startPoint - transform.position).normalized;
+            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(dir), 10 * Time.deltaTime);
             cc.SimpleMove(dir * speed);
         }
         else
         {
-            //위치값을 초기값으로
+            //위치값,회전값을 초기값으로
             transform.position = startPoint;
+            //transform.rotation = startRotation;
+            transform.rotation = Quaternion.identity;   //시작 회전값 0으로 초기화
             state = EnemyState.Idle;
             print("상태전환 : Return -> Idle");
+
+            //애니메이션
+            anim.SetTrigger("Idle");
         }
     }
 
@@ -334,6 +362,8 @@ public class EnemyFSM : MonoBehaviour
             print("HP : " + hp);
 
             Damaged();
+
+            anim.SetTrigger("Damaged");
         }
         else//0이하이면 죽음상태
         {
@@ -341,8 +371,9 @@ public class EnemyFSM : MonoBehaviour
             print("상태전환 : Any State -> Die");
 
             Die();
-        }
 
+            anim.SetTrigger("Die");
+        }
     }
 
     //피격상태 (Any State)
@@ -368,6 +399,7 @@ public class EnemyFSM : MonoBehaviour
         //현재상태를 이동으로 전환
         state = EnemyState.Move;
         print("상태전환 : Damaged -> Move");
+        //anim.SetTrigger("Move");
     }
 
     //죽음상태 (Any State)
