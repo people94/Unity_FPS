@@ -15,7 +15,7 @@ public class EnemyFSM : MonoBehaviour
     EnemyState state;
     //GameObject target;
 
-
+    NavMeshAgent nav;
 
     /// 유용한 기능
     #region
@@ -105,6 +105,8 @@ public class EnemyFSM : MonoBehaviour
 
         //애니메이터 컴포넌트 찾기
         anim = GetComponentInChildren<Animator>();
+
+        nav = GetComponent<NavMeshAgent>();
     }
 
     // Update is called once per frame
@@ -219,8 +221,8 @@ public class EnemyFSM : MonoBehaviour
         {
             //플레이어를 추격
             //이동방향 (벡터의 뺄셈)
-            Vector3 dir = (player.position - transform.position);   //내가 상대를 보는 방향 : 상대포지션에서 내포지션 뺀다
-            dir.Normalize();
+            //Vector3 dir = (player.position - transform.position);   //내가 상대를 보는 방향 : 상대포지션에서 내포지션 뺀다
+            //dir.Normalize();
             //캐릭터 컨트롤러를 이용해서 이동하기
             //cc.Move(dir * speed * Time.deltaTime);
             //몬스터가 백스텝으로 쫒아온다
@@ -235,7 +237,7 @@ public class EnemyFSM : MonoBehaviour
             //회전처리를 벡터의 러프를 사용하면 타겟과 본인이 일직선상일경우 백덤블링으로 회전을 한다.
 
             //최종적으로 자연스런 회전처리를 하려면 쿼터니언을 사용해야 한다.
-            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(dir), 10 * Time.deltaTime);
+            //transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(dir), 10 * Time.deltaTime);
 
             //캐릭터 컨트롤러를 이용해서 이동하기
             //cc.Move(dir * speed * Time.deltaTime);
@@ -243,7 +245,10 @@ public class EnemyFSM : MonoBehaviour
             //중력문제를 해결하기 위해서 심플무브를 사용한다.
             //심플무브는 최소한의 물리가 적용되어 중력문제를 해결할 수 있다.
             //단, 내부적으로 시간처리를 하기때문에 Time.deltaTime을 사용하지 않는다.
-            cc.SimpleMove(dir * speed);
+            //cc.SimpleMove(dir * speed);
+
+            nav.destination = player.transform.position;
+
         }
         else//공격범위 안에 들어옴
         {
@@ -328,9 +333,10 @@ public class EnemyFSM : MonoBehaviour
         //도착하면 대기상태로 변경
         if(Vector3.Distance(transform.position, startPoint) > 0.1f)
         {
-            Vector3 dir = (startPoint - transform.position).normalized;
-            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(dir), 10 * Time.deltaTime);
-            cc.SimpleMove(dir * speed);
+            //Vector3 dir = (startPoint - transform.position).normalized;
+            //transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(dir), 10 * Time.deltaTime);
+            //cc.SimpleMove(dir * speed);
+            nav.destination = startPoint;
         }
         else
         {
